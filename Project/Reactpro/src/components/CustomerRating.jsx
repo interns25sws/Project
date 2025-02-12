@@ -1,38 +1,65 @@
-import { FaStar, FaRegStar } from "react-icons/fa";
+import React from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-const CustomerRating = () => {
+const CustomerRating = ({ rating, totalReviews, growth, trendData }) => {
+  // Generate star icons dynamically based on rating
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    stars.push(
+      <span
+        key={i}
+        className={
+          i <= rating ? "text-yellow-500 text-2xl" : "text-gray-400 text-2xl"
+        }
+      >
+        ★
+      </span>
+    );
+  }
+
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-5 w-full mt-20 grid grid-rows-[auto_auto] gap-4">
-      <h2 className="text-xl font-semibold">Customer Rating</h2>
+    <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+      <h2 className="text-2xl font-semibold">Customer Rating</h2>
 
-      <div className="grid grid-cols-2 gap-4 items-center">
-        {/* Rating Score */}
-        <div className="text-4xl font-bold">3.0</div>
-
-        {/* Star Rating */}
-        <div className="flex items-center gap-1 text-yellow-500 text-xl">
-          <FaStar />
-          <FaStar />
-          <FaStar />
-          <FaRegStar />
-          <FaRegStar />
-          <span className="text-gray-500 text-sm ml-2">(318)</span>
-        </div>
+      {/* Star Ratings & Total Reviews */}
+      <div className="flex items-center space-x-2 mt-3">
+        {stars}
+        <p className="text-xl font-semibold">{rating.toFixed(1)}</p>
+        <p className="text-gray-500">({totalReviews})</p>
       </div>
 
       {/* Growth Indicator */}
-      <div className="grid grid-cols-2 gap-4 items-center">
-        <p className="text-green-500 text-sm">↑ +35</p>
-        <p className="text-gray-500 text-sm">Point from last month</p>
+      <div className="flex items-center text-green-500 mt-2">
+        <span className="text-lg font-medium">↑ +{growth}</span>
+        <p className="text-gray-500 ml-2">Point from last month</p>
       </div>
 
-      {/* Graph Placeholder */}
-      <div className="w-full h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-        <p>📈 Graph Here</p>
+      {/* Line Graph for Rating Trends */}
+      <div className="w-full h-32 mt-4">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={trendData}>
+            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+            <YAxis hide={true} />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="rating"
+              stroke="#22c55e"
+              strokeWidth={2}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Download Report Button */}
-      <button className="bg-green-500 text-white w-full py-2 rounded-lg text-sm font-semibold">
+      <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium mt-4 w-auto ml-28">
         Download Report
       </button>
     </div>

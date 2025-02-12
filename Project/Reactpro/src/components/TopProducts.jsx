@@ -1,71 +1,76 @@
 import React from "react";
-import { BsThreeDots } from "react-icons/bs";
+
+// Sample product data
+const products = [
+  {
+    id: 1,
+    name: "Lipstick",
+    stock: "Out of stock",
+    price: "$10.5",
+    image: "/images/lipstick.png",
+    stockClass: "text-red-500",
+  },
+  {
+    id: 2,
+    name: "Lipstick",
+    stock: "In stock",
+    price: "$10.5",
+    image: "/images/lipstick.png",
+    stockClass: "text-green-500",
+  },
+  {
+    id: 3,
+    name: "Lipstick",
+    stock: "In stock",
+    price: "$10.5",
+    image: "/images/lipstick.png",
+    stockClass: "text-green-500",
+  },
+];
 
 const TopProducts = () => {
-  // Sample product data
-  const products = [
-    {
-      id: 1,
-      name: "Lipstick",
-      stock: "Out of stock",
-      price: "$10.5",
-      statusColor: "text-red-500",
-    },
-    {
-      id: 2,
-      name: "Lipstick",
-      stock: "In stock",
-      price: "$10.5",
-      statusColor: "text-green-500",
-    },
-    {
-      id: 3,
-      name: "Lipstick",
-      stock: "In stock",
-      price: "$10.5",
-      statusColor: "text-green-500",
-    },
-    {
-      id: 4,
-      name: "Lipstick",
-      stock: "In stock",
-      price: "$10.5",
-      statusColor: "text-green-500",
-    },
-  ];
-
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-5 w-full mt-20">
-      <h2 className="text-xl font-semibold">Top products</h2>
-      <div className="mt-4">
-        {/* Table Header */}
-        <div className="grid grid-cols-4 text-gray-500 text-sm font-semibold border-b pb-2">
-          <div>Photo</div>
-          <div>Name</div>
-          <div>Stock</div>
-          <div>Price</div>
-        </div>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      {/* Section Title */}
+      <h2 className="text-2xl font-semibold mb-4">Top Products</h2>
 
-        {/* Product List */}
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="grid grid-cols-4 items-center text-sm py-3 border-b"
-          >
-            <div>
-              <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>{" "}
-              {/* Placeholder for image */}
-            </div>
-            <div>{product.name}</div>
-            <div className={`${product.statusColor} font-semibold`}>
-              {product.stock}
-            </div>
-            <div className="flex justify-between items-center">
-              {product.price}
-              <BsThreeDots className="cursor-pointer text-gray-500" />
-            </div>
-          </div>
-        ))}
+      {/* Product Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          {/* Table Head */}
+          <thead>
+            <tr className="border-b border-gray-300 text-left">
+              <th className="p-2">Photo</th>
+              <th className="p-2">Name</th>
+              <th className="p-2">Stock</th>
+              <th className="p-2">Price</th>
+              <th className="p-2">Action</th>
+            </tr>
+          </thead>
+
+          {/* Table Body */}
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id} className="border-b border-gray-200">
+                <td className="p-2">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-10 h-10 rounded-md"
+                  />
+                </td>
+                <td className="p-2">{product.name}</td>
+                <td className={`p-2 font-semibold ${product.stockClass}`}>
+                  {product.stock}
+                </td>
+                <td className="p-2">{product.price}</td>
+                <td className="p-2">
+                  <button className="text-gray-500 text-xl">⋮</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
