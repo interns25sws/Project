@@ -26,6 +26,14 @@ const products = [
     image: "/images/lipstick.png",
     stockClass: "text-green-500",
   },
+  {
+    id: 4,
+    name: "Lipstick",
+    stock: "In stock",
+    price: "$10.5",
+    image: "/images/lipstick.png",
+    stockClass: "text-green-500",
+  },
 ];
 
 const TopProducts = () => {
