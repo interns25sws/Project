@@ -33,7 +33,7 @@ const Dashboard = () => {
             growth={35}
             trendData={ratingTrendData}
           />
-          <div className="bg-red-300 p-6 rounded-lg shadow-md ">
+          <div className="col-span-2  p-6 rounded-lg shadow-md w-auto">
             <TopProducts />
           </div>
         </div>

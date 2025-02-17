@@ -25,14 +25,14 @@ const CustomerRating = ({ rating, totalReviews, growth, trendData }) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+    <div className=" p-6 rounded-lg shadow-md w-full max-w-xl mt-10">
       <h2 className="text-2xl font-semibold">Customer Rating</h2>
 
       {/* Star Ratings & Total Reviews */}
-      <div className="flex items-center space-x-2 mt-3">
+      <div className="flex items-center space-x-2 mt-3 h-10">
         {stars}
         <p className="text-xl font-semibold">{rating.toFixed(1)}</p>
-        <p className="text-gray-500">({totalReviews})</p>
+        <p className="text-gray-800">({totalReviews})</p>
       </div>
 
       {/* Growth Indicator */}
@@ -42,7 +42,7 @@ const CustomerRating = ({ rating, totalReviews, growth, trendData }) => {
       </div>
 
       {/* Line Graph for Rating Trends */}
-      <div className="w-full h-32 mt-4">
+      <div className="w-full h-32 mt-10">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={trendData}>
             <XAxis dataKey="month" tick={{ fontSize: 12 }} />
@@ -59,7 +59,7 @@ const CustomerRating = ({ rating, totalReviews, growth, trendData }) => {
       </div>
 
       {/* Download Report Button */}
-      <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium mt-4 w-auto ml-28">
+      <button className="bg-green-500 hover:bg-blue-500 text-white px-4 py-2 rounded-md font-medium mt-14 w-auto ml-48">
         Download Report
       </button>
     </div>

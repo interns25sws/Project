@@ -1,189 +1,220 @@
-import React from "react";
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import React, { useState } from "react";
 
-const activityData = [
-  { day: "Mon", hours: 4 },
-  { day: "Tue", hours: 6 },
-  { day: "Wed", hours: 5 },
-  { day: "Thu", hours: 8 },
-  { day: "Fri", hours: 10 },
-  { day: "Sat", hours: 7 },
-  { day: "Sun", hours: 5 },
-];
+const InvoiceTable = () => {
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState("This Month");
 
-const earningsData = [
-  { month: "Jan", revenue: 8000, profit: 5000 },
-  { month: "Feb", revenue: 9000, profit: 6000 },
-  { month: "Mar", revenue: 12000, profit: 7000 },
-  { month: "Apr", revenue: 15000, profit: 9000 },
-  { month: "May", revenue: 11000, profit: 8000 },
-  { month: "Jun", revenue: 14000, profit: 10000 },
-  { month: "Jul", revenue: 13000, profit: 9500 },
-];
+  const invoices = [
+    {
+      id: 1,
+      name: "Michael A. Miner",
+      status: "Completed",
+      amount: "$4,521",
+      due: "$8,521",
+      date: "2024-02-07",
+      payment: "Mastercard",
+      image: "https://via.placeholder.com/40",
+    },
+    {
+      id: 2,
+      name: "Theressa T. Bose",
+      status: "Cancelled",
+      amount: "$4,521",
+      due: "$8,521",
+      date: "2024-01-15",
+      payment: "Mastercard",
+      image: "https://via.placeholder.com/40",
+    },
+    {
+      id: 3,
+      name: "Theressa T. Bose",
+      status: "Completed",
+      amount: "$4,521",
+      due: "$8,521",
+      date: "2023-12-20",
+      payment: "Mastercard",
+      image: "https://via.placeholder.com/40",
+    },
+    {
+      id: 4,
+      name: "Michael A. Miner",
+      status: "Cancelled",
+      amount: "$4,521",
+      due: "$8,521",
+      date: "2023-11-10",
+      payment: "Mastercard",
+      image: "https://via.placeholder.com/40",
+    },
+    {
+      id: 5,
+      name: "Theressa T. Bose",
+      status: "Completed",
+      amount: "$4,521",
+      due: "$8,521",
+      date: "2023-11-25",
+      payment: "Mastercard",
+      image: "https://via.placeholder.com/40",
+    },
+    {
+      id: 6,
+      name: "Michael A. Miner",
+      status: "Pending",
+      amount: "$4,521",
+      due: "$8,521",
+      date: "2023-10-05",
+      payment: "Mastercard",
+      image: "https://via.placeholder.com/40",
+    },
+  ];
 
-const ratingData = [
-  { month: "Jan", rating: 2.5 },
-  { month: "Feb", rating: 3.0 },
-  { month: "Mar", rating: 3.2 },
-  { month: "Apr", rating: 3.5 },
-  { month: "May", rating: 3.8 },
-  { month: "Jun", rating: 4.0 },
-  { month: "Jul", rating: 4.2 },
-];
+  // Handle row selection
+  const toggleRowSelection = (id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+  };
 
-const ordersData = [
-  {
-    title: "Total Orders",
-    count: 13647,
-    image: "https://cdn-icons-png.flaticon.com/512/1170/1170678.png",
-  },
-  {
-    title: "New Leads",
-    count: 9526,
-    image: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-  },
-  {
-    title: "Deals",
-    count: 976,
-    image: "https://cdn-icons-png.flaticon.com/512/2910/2910793.png",
-  },
-  {
-    title: "Bookings",
-    count: 13647,
-    image: "https://cdn-icons-png.flaticon.com/512/5955/5955805.png",
-  },
-];
+  const isRowSelected = (id) => selectedRows.includes(id);
 
-const Dashboard = () => {
+  // Status styling
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Completed":
+        return "bg-green-100 text-green-700 border-green-500";
+      case "Cancelled":
+        return "bg-red-100 text-red-700 border-red-500";
+      case "Pending":
+        return "bg-yellow-100 text-yellow-700 border-yellow-500";
+      default:
+        return "bg-gray-100 text-gray-700 border-gray-500";
+    }
+  };
+
+  // Filter invoices based on selected time period
+  const filterInvoices = () => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+
+    return invoices.filter((invoice) => {
+      const invoiceDate = new Date(invoice.date);
+      const invoiceMonth = invoiceDate.getMonth();
+      const invoiceYear = invoiceDate.getFullYear();
+
+      if (selectedFilter === "This Month") {
+        return invoiceMonth === currentMonth && invoiceYear === currentYear;
+      } else if (selectedFilter === "Last Month") {
+        return (
+          invoiceMonth === (currentMonth === 0 ? 11 : currentMonth - 1) &&
+          invoiceYear === (currentMonth === 0 ? currentYear - 1 : currentYear)
+        );
+      } else if (selectedFilter === "Last 3 Months") {
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        return invoiceDate >= threeMonthsAgo;
+      }
+      return true;
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-gray-200 p-6 mt-20">
-      {/* Grid Container */}
-      <div className="grid grid-cols-3 gap-6">
-        {/* Left Section - Activity & Earnings */}
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            <h2 className="text-xl font-semibold">Activity</h2>
-            <p className="text-gray-500">24.9 hours spent</p>
-            <ResponsiveContainer width="100%" height={150}>
-              <BarChart data={activityData}>
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="hours" fill="#7C3AED" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            <h2 className="text-xl font-semibold">Earnings</h2>
-            <p className="text-gray-500">Revenue & Profit</p>
-            <div className="flex justify-between text-blue-500 font-bold">
-              <span>$37,802</span>
-              <span className="text-purple-500">$37,802</span>
-            </div>
-            <ResponsiveContainer width="100%" height={150}>
-              <BarChart data={earningsData}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="revenue" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="profit" fill="#9333EA" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="bg-white p-4 rounded-lg shadow">
+          <p className="text-gray-500">All Customers</p>
+          <h3 className="text-xl font-semibold">+22.6K</h3>
         </div>
-
-        {/* Middle Section - Orders (With Images) */}
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold">Orders</h2>
-          <div className="grid grid-cols-2 gap-4 mt-4 h-1/2">
-            {ordersData.map((order, index) => (
-              <div
-                key={index}
-                className="p-4 bg-gray-100 rounded-lg flex items-center space-x-3"
-              >
-                <img
-                  src={order.image}
-                  alt={order.title}
-                  className="w-10 h-10"
-                />
-                <div>
-                  <p className="text-lg font-semibold">{order.title}</p>
-                  <span className="text-xl font-bold">{order.count}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <p className="text-gray-500">Orders</p>
+          <h3 className="text-xl font-semibold">+4.5K</h3>
         </div>
-
-        {/* Right Section - Customer Rating */}
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold">Customer Rating</h2>
-          <div className="text-center">
-            <span className="text-3xl font-bold">3.0</span>
-            <div className="flex justify-center mt-2 space-x-1 text-yellow-400">
-              ⭐ ⭐ ⭐ ☆ ☆
-            </div>
-            <p className="text-gray-500">(318 reviews)</p>
-          </div>
-          {/* Customer Rating Graph */}
-          <ResponsiveContainer width="100%" height={100}>
-            <LineChart data={ratingData}>
-              <XAxis dataKey="month" />
-              <YAxis domain={[2, 5]} />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="rating"
-                stroke="#22C55E"
-                strokeWidth={3}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-          <button className="w-full mt-4 py-2 bg-green-500 text-white rounded-lg">
-            Download Report
-          </button>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <p className="text-gray-500">Service Requests</p>
+          <h3 className="text-xl font-semibold">+1.03K</h3>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <p className="text-gray-500">Invoice & Payment</p>
+          <h3 className="text-xl font-semibold">$38,900.00</h3>
         </div>
       </div>
 
-      {/* Bottom Section - Top Products */}
-      <div className="mt-6 bg-white p-6 rounded-xl shadow-md">
-        <h2 className="text-xl font-semibold">Top Products</h2>
-        <table className="w-full mt-4">
+      {/* Filter Dropdown */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">All Customers List</h2>
+        <select
+          value={selectedFilter}
+          onChange={(e) => setSelectedFilter(e.target.value)}
+          className="p-2 border rounded-md bg-white text-gray-700"
+        >
+          <option>This Month</option>
+          <option>Last Month</option>
+          <option>Last 3 Months</option>
+        </select>
+      </div>
+
+      {/* Table */}
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <table className="w-full border-collapse">
           <thead>
-            <tr className="text-left border-b">
-              <th className="py-2">Photo</th>
-              <th>Name</th>
-              <th>Stock</th>
-              <th>Price</th>
-              <th>Action</th>
+            <tr className="text-left bg-gray-100">
+              <th className="p-3">
+                <input type="checkbox" className="w-4 h-4" />
+              </th>
+              <th className="p-3">Customer</th>
+              <th className="p-3">Invoice ID</th>
+              <th className="p-3">Status</th>
+              <th className="p-3">Total Amount</th>
+              <th className="p-3">Amount Due</th>
+              <th className="p-3">Due Date</th>
+              <th className="p-3">Payment Method</th>
+              <th className="p-3">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {[...Array(4)].map((_, i) => (
-              <tr key={i} className="border-b">
-                <td className="py-2">
-                  <img
-                    src="https://via.placeholder.com/40"
-                    alt="Product"
-                    className="rounded-lg"
+            {filterInvoices().map((invoice) => (
+              <tr key={invoice.id} className="border-b">
+                <td className="p-3">
+                  <input
+                    type="checkbox"
+                    checked={isRowSelected(invoice.id)}
+                    onChange={() => toggleRowSelection(invoice.id)}
+                    className="w-4 h-4"
                   />
                 </td>
-                <td>Lipstick</td>
-                <td className={i === 0 ? "text-red-500" : "text-green-500"}>
-                  {i === 0 ? "Out of stock" : "In stock"}
+                <td className="p-3 flex items-center">
+                  <img
+                    src={invoice.image}
+                    alt="profile"
+                    className="w-10 h-10 rounded-full mr-3"
+                  />
+                  {invoice.name}
                 </td>
-                <td>$10.5</td>
-                <td>⋮</td>
+                <td className="p-3 text-gray-700">#inv2054</td>
+                <td className="p-3">
+                  <span
+                    className={`px-3 py-1 text-sm font-semibold border rounded-md ${getStatusClass(
+                      invoice.status
+                    )}`}
+                  >
+                    {invoice.status}
+                  </span>
+                </td>
+                <td className="p-3">{invoice.amount}</td>
+                <td className="p-3">{invoice.due}</td>
+                <td className="p-3">{invoice.date}</td>
+                <td className="p-3">{invoice.payment}</td>
+                <td className="p-3 flex space-x-2">
+                  <button className="text-gray-600 hover:text-gray-900">
+                    👁️
+                  </button>
+                  <button className="text-gray-600 hover:text-gray-900">
+                    ✏️
+                  </button>
+                  <button className="text-gray-600 hover:text-red-600">
+                    🗑️
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -193,4 +224,132 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default InvoiceTable;
+--------------------------------------------------
+upated code for activityearnings
+
+
+
+import React, { useState } from "react";
+import { Bar } from "react-chartjs-2";
+import DatePicker from "react-datepicker"; // ✅ Import DatePicker
+import "react-datepicker/dist/react-datepicker.css"; // ✅ Import styles
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+const ActivityEarnings = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date()); // ✅ Calendar state
+
+  // Activity Data
+  const activityData = {
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    datasets: [
+      {
+        label: "Hours Spent",
+        data: [2.5, 3.8, 4.2, 5.1, 3.5, 4.7, 6.0],
+        backgroundColor: "rgba(153, 102, 255, 0.6)",
+        borderColor: "rgba(153, 102, 255, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Earnings Data
+  const earningsData = {
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    datasets: [
+      {
+        label: "Revenue ($)",
+        data: [5000, 8000, 6500, 12000, 10000, 7000, 9000],
+        backgroundColor: "rgba(54, 162, 235, 0.6)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+      },
+      {
+        label: "Profit ($)",
+        data: [2000, 4000, 3000, 7000, 6000, 3500, 5000],
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Chart options
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "top" },
+      title: { display: true },
+    },
+  };
+
+  return (
+    <div className="col-span-1 bg-secondary p-4 rounded-lg shadow">
+      {/* Header Section with Calendar */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-semibold">Activity</h2>
+
+        {/* ✅ Date Picker */}
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+          className="bg-white border rounded-lg p-2 text-gray-700"
+        />
+      </div>
+
+      <p className="text-3xl font-bold mt-6 flex">
+        <span>24.9</span>
+        <span className="flex flex-col items-start text-sm font-normal">
+          <span>Hours</span>
+          <span>spent</span>
+        </span>
+      </p>
+
+      {/* Activity Graph */}
+      <div className="mt-6 h-64">
+        <Bar data={activityData} options={{ ...options, title: { text: "Weekly Activity (Hours Spent)" } }} />
+      </div>
+
+      {/* Earnings Section */}
+      <h2 className="text-4xl font-semibold mt-12 flex items-center justify-between">
+        <span>Earnings</span>
+        <span className="text-4xl">...</span>
+      </h2>
+
+      <div className="flex justify-between">
+        {[
+          { label: "Revenue", color: "text-blue-600", amount: "$37,802" },
+          { label: "Profit", color: "text-purple-600", amount: "$15,302" },
+        ].map((item, index) => (
+          <div key={index} className="flex items-center">
+            <div className={`h-4 w-4 ${item.color} rounded-full mr-2`}></div>
+            <div>
+              <p className={`mt-8 text-3xl ${item.color}`}>{item.label}</p>
+              <p className="font-bold text-xl">{item.amount}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Earnings Graph */}
+      <div className="mt-6 h-64">
+        <Bar data={earningsData} options={{ ...options, title: { text: "Weekly Earnings Overview" } }} />
+      </div>
+    </div>
+  );
+};
+
+export default ActivityEarnings;
